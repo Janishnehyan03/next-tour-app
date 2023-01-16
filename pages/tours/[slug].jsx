@@ -5,7 +5,7 @@ import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import ReviewCard from "../../components/ReviewCard";
-import Axios from "../Axios";
+import Axios from "../";
 
 export async function getStaticPaths() {
   const res = await fetch(`https://tours-api.onrender.com/api/v1/tours`);

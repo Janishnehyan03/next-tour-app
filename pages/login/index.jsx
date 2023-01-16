@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
-import Axios from "../Axios";
+import Axios from "../../services/Axios";
 import { UserAuthContext } from "../../context/userContext";
 import { setCookie } from "cookies-next";
 

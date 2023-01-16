@@ -1,7 +1,7 @@
 import axios from "axios";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import Axios from "../../Axios";
+import Axios from "../../../services/Axios";
 import { FaAdd, FaPlus, FaUser } from "react-icons/fa";
 
 function AddTour() {
