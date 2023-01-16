@@ -16,7 +16,7 @@ function TourCard({ tour }) {
             }}
           >
             <Image
-              src={`https://tours-api-2022.onrender.com/img/tours/${tour.imageCover}`}
+              src={`https://tours-api.onrender.com/img/tours/${tour.imageCover}`}
               alt={tour.name}
               className="h-full w-full object-cover object-center"
               fill={'contain'}

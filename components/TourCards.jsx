@@ -9,7 +9,7 @@ export default function TourCards({ tours }) {
           <h2 className="text-2xl font-bold text-gray-900">Collections</h2>
 
           <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-2 ">
-            {tours.length > 0 ? (
+            {!tours || tours.length > 0 ? (
               tours?.map((tour) => <TourCard key={tour.name} tour={tour} />)
             ) : (
               <LoadingCard />

@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["tours-api-2022.onrender.com", "images.pexels.com"],
+    domains: ["tours-api.onrender.com", "localhost", "images.pexels.com"],
   },
 };
 

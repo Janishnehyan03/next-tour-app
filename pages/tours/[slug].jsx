@@ -5,9 +5,10 @@ import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import ReviewCard from "../../components/ReviewCard";
+import Axios from "../Axios";
 
 export async function getStaticPaths() {
-  const res = await fetch(`https://tours-api-2022.onrender.com/api/v1/tours`);
+  const res = await fetch(`https://tours-api.onrender.com/api/v1/tours`);
   const data = await res.json();
   const paths = data.data.map((item) => {
     return {
@@ -19,19 +20,21 @@ export async function getStaticPaths() {
     fallback: false,
   };
 }
+
 export async function getStaticProps(context) {
   // Fetch data from external API
   const slug = context.params.slug;
-  const res = await fetch(
-    `https://tours-api-2022.onrender.com/api/v1/tours?slug=` + slug
-  );
+  const res = await fetch(`https://tours-api.onrender.com/api/v1/tours?slug=` + slug);
   const data = await res.json();
+  const reviewRes = await fetch(
+    `https://tours-api.onrender.com/api/v1/tours/${data.data[0]._id}/reviews`
+  );
+  const reviewData = await reviewRes.json();
   // Pass data to the page via props
-  return { props: { tour: data.data[0] } };
+  return { props: { tour: data.data[0], reviews: reviewData.data } };
 }
 
-export default function TourDetails({ tour }) {
-  console.log(tour);
+export default function TourDetails({ tour, reviews }) {
   mapboxgl.accessToken =
     "pk.eyJ1IjoiamFuaXNobmVoeWFuMDMiLCJhIjoiY2t0YXlpdWZlMWs1bjJ1cGMxZDltN3hzeiJ9.pBorchZzN28cBWovhnm_xQ";
   const mapContainer = useRef(null);
@@ -41,6 +44,12 @@ export default function TourDetails({ tour }) {
   const [lat, setLat] = useState(tour.locations[0].coordinates[1]);
   const [zoom, setZoom] = useState(9);
 
+  const orderNow = async (e) => {
+    try {
+      let res = await Axios.post();
+    } catch (error) {}
+  };
+  
   useEffect(() => {
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
@@ -58,6 +67,7 @@ export default function TourDetails({ tour }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <div className="bg-white">
         <div className="pt-6">
           <h1 className="text-center text-3xl lg:text-5xl mb-3 font-bold uppercase text-[#9089fc]">
@@ -68,13 +78,13 @@ export default function TourDetails({ tour }) {
           </p>
           {/* Image gallery */}
           <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
-            <div className="aspect-w-3 aspect-h-4  overflow-hidden rounded-lg lg:block">
+            <div className="aspect-w-3 aspect-h-4  overflow-hidden lg:block">
               <div
                 style={{ width: "100%", height: "100%" }}
                 className="rounded-lg"
               >
                 <Image
-                  src={`https://tours-api-2022.onrender.com/img/tours/${tour.imageCover}`}
+                  src={`https://tours-api.onrender.com/img/tours/${tour.imageCover}`}
                   alt={tour.name}
                   className="h-full w-full object-cover object-center m-2"
                   width="500"
@@ -88,7 +98,7 @@ export default function TourDetails({ tour }) {
                 className="aspect-w-3 aspect-h-2 overflow-hidden rounded-lg m-2"
               >
                 <Image
-                  src={`https://tours-api-2022.onrender.com/img/tours/${tour.images[0]}`}
+                  src={`https://tours-api.onrender.com/img/tours/${tour.images[0]}`}
                   alt={tour.name}
                   className="h-full w-full object-cover object-center"
                   width="500"
@@ -101,7 +111,7 @@ export default function TourDetails({ tour }) {
                 className="aspect-w-3 aspect-h-2 overflow-hidden rounded-lg m-2"
               >
                 <Image
-                  src={`https://tours-api-2022.onrender.com/img/tours/${tour.images[1]}`}
+                  src={`https://tours-api.onrender.com/img/tours/${tour.images[1]}`}
                   alt={tour.name}
                   className="h-full w-full object-cover object-center"
                   height="600"
@@ -114,7 +124,7 @@ export default function TourDetails({ tour }) {
               className="aspect-w-4 aspect-h-5 sm:overflow-hidden m-2 sm:rounded-lg lg:aspect-w-3 lg:aspect-h-4"
             >
               <Image
-                src={`https://tours-api-2022.onrender.com/img/tours/${tour.images[2]}`}
+                src={`https://tours-api.onrender.com/img/tours/${tour.images[2]}`}
                 alt={tour.name}
                 className="h-full w-full object-cover object-center"
                 width="500"
@@ -143,10 +153,13 @@ export default function TourDetails({ tour }) {
                 <h3 className="sr-only">Reviews</h3>
                 <div className="flex items-center">
                   <div className="flex items-center">
-                    {[...Array(Math.round(tour.rating))].map((rating) => (
+                    {[...Array(5)].map((rating, key) => (
                       <StarIcon
-                        key={rating}
-                        className={"text-gray-900 h-5 w-5 flex-shrink-0"}
+                        className={
+                          tour.rating > key
+                            ? "h-5 w-5 flex-shrink-0 text-[#9089FC]"
+                            : "h-5 w-5 flex-shrink-0 text-gray-300"
+                        }
                         aria-hidden="true"
                       />
                     ))}
@@ -165,7 +178,7 @@ export default function TourDetails({ tour }) {
                 {tour.guides.map((guide, key) => (
                   <div key={key} className="my-2 items-center flex">
                     <img
-                      src={`https://tours-api-2022.onrender.com/img/users/${guide.photo}`}
+                      src={`https://tours-api.onrender.com/img/users/${guide.photo}`}
                       className="h-12 rounded-full mr-2"
                     />
                     <h1 className="font-semibold uppercase">{guide.name}</h1>
@@ -178,6 +191,7 @@ export default function TourDetails({ tour }) {
                 </p>
                 <button
                   type="submit"
+                  onClick={(e) => orderNow(e)}
                   className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   Buy Now
@@ -231,8 +245,7 @@ export default function TourDetails({ tour }) {
             </div>
           </div>
         </div>
-            <ReviewCard />
-            <ReviewCard />
+        <ReviewCard reviews={reviews} />
       </div>
       <div ref={mapContainer} className="h-[400px]" />
     </>

@@ -16,7 +16,7 @@ const navigation = [
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { authData } = useContext(UserAuthContext);
-  console.log(authData);
+
   return (
     <div className="px-6 pt-6 lg:px-8">
       <div>
@@ -58,7 +58,7 @@ function Navbar() {
             {authData ? (
               <div className="flex items-center">
                 <Image
-                  src={`https://tours-api-2022.onrender.com/img/users/${authData.photo}`}
+                  src={`https://tours-api.onrender.com/img/users/${authData.photo}`}
                   height={40}
                   width={40}
                   className={'rounded-full mr-2'}

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const Axios = axios.create({
-baseURL: "https://tours-api-2022.onrender.com/api/v1",
+  baseURL: "https://tours-api.onrender.com/api/v1",
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",

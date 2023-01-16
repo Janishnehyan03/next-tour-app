@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
-import Axios from "../Axios";
+import Axios from "../pages/Axios";
 
 export const UserAuthContext = createContext({});
 
@@ -10,23 +10,25 @@ export const UserAuthProvider = (props) => {
 
   const checkUserLogin = async () => {
     try {
-      const res = await Axios.post(
-        "/users/checkLogin",
-        {},
-        { withCredentials: true }
-      );
-      console.log(res.data);
+      const res = await Axios.post("/users/checkLogin");
       if (res.status === 200) {
         setAuthData(res.data.user);
       }
     } catch (error) {
       console.log(error.response);
+      if (
+        error.response.data.err.message === "invalid token" ||
+        error.response.data.err.name === "JsonWebTokenError"
+      ) {
+        logout();
+      }
     }
   };
   const logout = async () => {
     try {
-      const res = await Axios.post("/users/logout");
+      const res = await Axios.get("/users/logout");
       if (res.data.success) {
+        localStorage.setItem("loggedIn", false);
         setAuthData(null);
         window.location.href = "/users/login";
       }

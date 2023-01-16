@@ -1,14 +1,16 @@
 import Head from "next/head";
 import Link from "next/link";
-import React, { useContext, useState } from "react";
-import Axios from "../../Axios";
+import React, { useContext, useEffect, useState } from "react";
+import Axios from "../Axios";
 import { UserAuthContext } from "../../context/userContext";
+import { setCookie } from "cookies-next";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { setAuthData } = useContext(UserAuthContext);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,15 +23,24 @@ function Login() {
 
       if (res.status === 200) {
         setLoading(false);
-        console.log(res.data);
-        setAuthData(res.data.data);
-        // window.location.href = "/";
+        setCookie("jwt_frontend", res.data.token);
+        localStorage.setItem("loggedIn", true);
+        setAuthData(res.data.user);
+        window.location.href = "/";
       }
     } catch (error) {
       setLoading(false);
       console.log(error.response);
     }
   };
+  useEffect(() => {
+    if (localStorage.getItem("loggedIn")) {
+      setLoggedIn(true);
+    }
+  }, []);
+  if (loggedIn) {
+    window.location.href = "/";
+  }
   return (
     <>
       <Head>
